@@ -71,18 +71,15 @@ class CreateAccountScreen(Screen):
         popup.open()
 
     def create(self):
-        if self.email.text != '' and self.nickname.text != '' and self.password.text != '':
-            if len(self.password.text) < 6 or len(self.nickname.text) < 3 or len(self.email.text) == 0:
-                self.show_requirements()
-            else:
-                check = check_if_available(self.nickname.text)
-                if check == 1:
-                    create_account(self.nickname.text, self.email.text, self.password.text, [])
-                    self.create_success()
-                else:
-                    self.not_available()
+        if len(self.password.text) < 6 or len(self.nickname.text) < 3 or len(self.email.text) == 0:
+            self.show_requirements()
         else:
-            pass
+            check = check_if_available(self.nickname.text)
+            if check == 1:
+                create_account(self.nickname.text, self.email.text, self.password.text, [])
+                self.create_success()
+            else:
+                self.not_available()
 
 
 class MainAppScreen(Screen):
