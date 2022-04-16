@@ -3,6 +3,8 @@ WindowManager:
     LogInScreen:
     CreateAccountScreen:
     MainAppScreen:
+    TestScreen:
+    SuggestSportScreen:
 
 <WelcomeScreen>
     name: "welcome"
@@ -46,11 +48,12 @@ WindowManager:
                     app.root.current = "create"
                     root.manager.transition.direction = "right"
 
-
 <LogInScreen>
     name: "login"
     email: email
     password: password
+    on_leave:
+        root.set_default()
     canvas.before:
         Color:
             rgba: (0.35,0.9,0.9,0.7)
@@ -69,7 +72,7 @@ WindowManager:
             size_hint:(0.5,0.1)
             cols:2
             Label:
-                text:"Email:"
+                text:"Email/Name:"
             TextInput:
                 id: email
                 multiline: False
@@ -78,6 +81,8 @@ WindowManager:
             TextInput:
                 id: password
                 multiline: False
+                password: True
+                password_mask: '*'
         Button:
             pos_hint:{"x":0.4,"y":0.35}
             size_hint:(0.2,0.1)
@@ -100,6 +105,8 @@ WindowManager:
     email: email
     nickname: nickname
     password: password
+    on_leave:
+        root.set_default()
     canvas.before:
         Color:
             rgba: (0.35,0.9,0.9,0.7)
@@ -132,6 +139,8 @@ WindowManager:
             TextInput:
                 id: password
                 multiline: False
+                password: True
+                password_mask: '*'
         Button:
             pos_hint:{"x":0.4,"y":0.3}
             size_hint:(0.2,0.1)
@@ -153,36 +162,286 @@ WindowManager:
     name: "main"
     canvas.before:
         Color:
-            rgba: (1,1,1,1)
+            rgb: (187/255, 242/255, 242/255)
         Rectangle:
             pos: self.pos
             size: self.size
     FloatLayout:
         size: root.width, root.height
         GridLayout:
+            pos_hint:{"x":0.08,"y":0}
+            size_hint:(0.85,0.9)
+            canvas:
+                Color:
+                    rgb: (138/255, 222/255, 221/255)
+                Ellipse:
+                    pos: self.pos
+                    size: self.size
+                    angle_start: 0
+                    angle_end: 360
+        GridLayout:
             pos_hint:{"x":0,"y":0.9}
             size_hint:(1,0.2)
             canvas:
                 Color:
-                    rgb: (0.063, 0.451, 0.451)
+                    rgb: (43/255, 140/255, 139/255)
                 Rectangle:
                     pos: self.pos
                     size: self.size
+        Label:
+            id: hello_user
+            pos_hint:{"x":0.25,"y":0.55}
+            size_hint:(0.5,0.2)
+            text: "Hello user!"
+            font_size: 40
+            font_color: (1,1,1,1)
+
+        Button:
+            pos_hint:{"x":0.25,"y":0.4}
+            size_hint:(0.5,0.15)
+            background_normal:''
+            background_color: (120/255, 65/255, 150/255,0.8)
+            font_size: 25
+            text:"Suggest me a sport"
+            on_press:
+                root.check_if_suggest()
+                root.manager.transition.direction = "left"
+        Button:
+            pos_hint:{"x":0.3,"y":0.25}
+            size_hint:(0.4,0.1)
+            background_normal:''
+            background_color: (156/255, 92/255, 191/255,0.8)
+            text:"Take a test"
+            on_press:
+                app.root.current="test"
+                root.manager.transition.direction = "up"
         Spinner:
             pos_hint:{"x":0.8,"y":0.9}
             size_hint:(0.2,0.1)
-            background_color: (0.35,0.9,0.9,0.9)
+            background_color: (43/255, 140/255, 139/255,0.3)
             id: account_spinner
             text: "Name"
             values: ["Settings","Log Out"]
             on_text:
                 root.spinner_account(account_spinner.text)
-
-        Button:
-            pos_hint:{"x":0.4,"y":0.2}
-            size_hint:(0.2,0.05)
-            text:"LogOut"
-            background_color:(0.3,0.9,0.7)
-            on_press:
-                app.root.current="welcome"
                 root.manager.transition.direction = "right"
+
+<TestScreen>
+    name: "test"
+    on_leave:
+        root.set_default()
+    canvas.before:
+        Color:
+            rgb: (227/255, 196/255, 245/255,0.8)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    FloatLayout:
+        size: root.width, root.height
+        GridLayout:
+            pos_hint:{"x":0.1,"y":0}
+            size_hint:(0.8,1)
+            cols:1
+            canvas:
+                Color:
+                    rgb: (156/255, 92/255, 191/255,0.8)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        GridLayout:
+            pos_hint:{"x":0.1,"y":0.9}
+            size_hint:(0.8,0.1)
+            cols:1
+            canvas:
+                Color:
+                    rgb: (120/255, 65/255, 150/255,0.8)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+        Label:
+            pos_hint:{"x":0.05,"y":0.85}
+            size_hint:(0.3,0.2)
+            font_size:20
+            color: 1,1,1,1
+            text:"Definitely no"
+        Label:
+            pos_hint:{"x":0.63,"y":0.85}
+            size_hint:(0.3,0.2)
+            font_size:20
+            color: 1,1,1,1
+            text:"Absolutely yes"
+        GridLayout:
+            pos_hint:{"x":0.2,"y":0.2}
+            size_hint:(0.6,0.7)
+            cols:1
+            Label:
+                font_size:20
+                color: 1,1,1,1
+                text:"Are you a team player?"
+            Slider:
+                id: group_slider
+                orientation: 'horizontal'
+                max: 5
+                min: 0
+                padding: 0
+                value: root.group
+                on_value: root.group = self.value
+                step: 1
+            Label:
+                font_size:20
+                color: 1,1,1,1
+                text:"Would you like to strengthen your joints?"
+            Slider:
+                id: joints_slider
+                orientation: 'horizontal'
+                max: 5
+                min: 0
+                padding: 0
+                value: root.joints
+                on_value: root.joints = self.value
+                step: 1
+            Label:
+                font_size:20
+                color: 1,1,1,1
+                text:"Do you like spending time outdoors?"
+            Slider:
+                id: out_slider
+                orientation: 'horizontal'
+                max: 5
+                min: 0
+                padding: 0
+                value: root.out
+                on_value: root.out = self.value
+                step: 1
+            Label:
+                font_size:20
+                color: 1,1,1,1
+                text:"The cold never bothered me anyway"
+            Slider:
+                id: winter_slider
+                orientation: 'horizontal'
+                max: 5
+                min: 0
+                padding: 0
+                value: root.winter
+                on_value: root.winter = self.value
+                step: 1
+            Label:
+                font_size:20
+                color: 1,1,1,1
+                text:"Maybe some shoulder exercises?"
+            Slider:
+                id: shoulder_slider
+                orientation: 'horizontal'
+                max: 5
+                min: 0
+                padding: 0
+                value: root.shoulder
+                on_value: root.shoulder = self.value
+                step: 1
+            Label:
+                font_size:20
+                color: 1,1,1,1
+                text:"Are you an animal lover?"
+            Slider:
+                id: animal_slider
+                orientation: 'horizontal'
+                max: 5
+                min: 0
+                padding: 0
+                value: root.animal
+                on_value: root.animal = self.value
+                step: 1
+            Label:
+                font_size:20
+                color: 1,1,1,1
+                text:"Is water your soul element?"
+            Slider:
+                id: water_slider
+                orientation: 'horizontal'
+                max: 5
+                min: 0
+                padding: 0
+                value: root.water
+                on_value: root.water = self.value
+                step: 1
+        Button:
+            pos_hint:{"x":0.3,"y":0.08}
+            size_hint:(0.4,0.1)
+            background_color: (54/255, 24/255, 71/255,0.9)
+            background_normal:''
+            text:"Send"
+            on_press:
+                root.set_sports()
+                root.send_success()
+        Button:
+            pos_hint:{"x":0.4,"y":0.01}
+            size_hint:(0.2,0.05)
+            background_color: (54/255, 24/255, 71/255,0.9)
+            background_normal:''
+            text:"Go back"
+            on_press:
+                app.root.current="main"
+                root.manager.transition.direction = "down"
+
+<SuggestSportScreen>
+    name: "suggest"
+    on_enter:
+        root.choose_sport()
+    on_leave:
+        root.set_default()
+    canvas.before:
+        Color:
+            rgb: (179/255, 196/255, 242/255,0.8)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    FloatLayout:
+        size: root.width, root.height
+        GridLayout:
+            pos_hint:{"x":0,"y":0}
+            size_hint:(1,1)
+            canvas:
+                Color:
+                    rgb: (56/255, 79/255, 140/255,0.8)
+                Ellipse:
+                    pos: self.pos
+                    size: self.size
+                    angle_start: 0
+                    angle_end: 360
+        GridLayout:
+            pos_hint:{"x":0.35,"y":0.7}
+            size_hint:(0.3,0.2)
+            cols:1
+            Label:
+                id: sport_name
+                text:"We propose you:"
+                font_size:30
+                color: 1,1,1,1
+            Label:
+                id: sport_name
+                text:"Calculating..."
+                font_size:35
+                color: 1,1,1,1
+        TextInput:
+            id: sport_desc
+            pos_hint:{"x":0.15,"y":0.25}
+            size_hint:(0.7,0.4)
+            background_color: (103/255, 129/255, 199/255,0.8)
+            background_normal: ''
+            background_disabled_normal: ''
+            foreground_color: (1,1,1,1)
+            font_size: 20
+            text:"Calculating..."
+            multiline: True
+        Button:
+            pos_hint:{"x":0.4,"y":0.1}
+            size_hint:(0.2,0.05)
+            background_color: (36/255, 56/255, 110/255,0.9)
+            background_normal:''
+            text:"Go back"
+            on_press:
+                app.root.current="main"
+                root.manager.transition.direction = "right"
+
